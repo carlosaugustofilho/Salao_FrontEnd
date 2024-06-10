@@ -5,10 +5,12 @@ const useHorarios = (barbeiroId) => {
     const [horarios, setHorarios] = useState([]);
 
     useEffect(() => {
-        fetchHorarios();
-    }, []);
+        if (barbeiroId) {
+            fetchHorarios(barbeiroId);
+        }
+    }, [barbeiroId]);
 
-    const fetchHorarios = async () => {
+    const fetchHorarios = async (barbeiroId) => {
         try {
             const horariosDisponiveis = await scheduleService.listarHorarios(barbeiroId);
             setHorarios(horariosDisponiveis);
@@ -20,7 +22,7 @@ const useHorarios = (barbeiroId) => {
     const handleAgendar = async (id) => {
         try {
             await scheduleService.atualizarStatusHorario(id, 0);
-            fetchHorarios(); 
+            fetchHorarios(barbeiroId); 
         } catch (error) {
             console.error('Erro ao atualizar status do horário:', error);
         }
@@ -29,7 +31,7 @@ const useHorarios = (barbeiroId) => {
     const adicionarHorario = async (horario) => {
         try {
             await scheduleService.adicionarHorario(horario);
-            fetchHorarios();
+            fetchHorarios(horario.barbeiroId);
         } catch (error) {
             console.error('Erro ao adicionar horário:', error);
         }
@@ -38,7 +40,7 @@ const useHorarios = (barbeiroId) => {
     const removerHorario = async (id) => {
         try {
             await scheduleService.removerHorario(id);
-            fetchHorarios();
+            fetchHorarios(barbeiroId);
         } catch (error) {
             console.error('Erro ao remover horário:', error);
         }

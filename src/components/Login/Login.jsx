@@ -5,13 +5,12 @@ import { useNavigate } from 'react-router-dom';
 const Login = ({ onLogin }) => {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
-    const [senhaVisivel, setSenhaVisivel] = useState(false); // Definindo corretamente aqui
+    const [senhaVisivel, setSenhaVisivel] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            debugger;
             console.log('Tentando login com:', { email, senha });
             const response = await api.login(email, senha);
             const user = response;
@@ -38,8 +37,6 @@ const Login = ({ onLogin }) => {
             alert('Erro ao fazer login: ' + error.message);
         }
     };
-    
-    
 
     const handleRegisterClick = () => {
         navigate('/register');

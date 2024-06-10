@@ -1,9 +1,8 @@
-// src/components/Menu.jsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-const Menu = ({ onLogout, userName }) => {
+const Menu = ({ onLogout, user }) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -20,7 +19,7 @@ const Menu = ({ onLogout, userName }) => {
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container-fluid">
-                <Link className="navbar-brand" to="/">Bem-vindo, {userName}</Link>
+                <Link className="navbar-brand" to="/">Bem-vindo, {user.nome}</Link>
                 <button
                     className="navbar-toggler"
                     type="button"
@@ -39,15 +38,19 @@ const Menu = ({ onLogout, userName }) => {
                         <li className="nav-item">
                             <Link className="nav-link" to="/horariosdisponiveis">Horários Disponíveis</Link>
                         </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/horarios">Registrar Horários Disponíveis</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/agendamentos">Agendamentos</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/clientes">Clientes</Link>
-                        </li>
+                        {user.papelId !== 1 && (
+                            <>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/horarios">Registrar Horários Disponíveis</Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/agendamentos">Agendamentos</Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/clientes">Clientes</Link>
+                                </li>
+                            </>
+                        )}
                         <li className="nav-item">
                             <button className="btn btn-outline-light nav-link" onClick={handleLogout}>
                                 Logout
@@ -62,7 +65,10 @@ const Menu = ({ onLogout, userName }) => {
 
 Menu.propTypes = {
     onLogout: PropTypes.func.isRequired,
-    userName: PropTypes.string.isRequired,
+    user: PropTypes.shape({
+        nome: PropTypes.string.isRequired,
+        papelId: PropTypes.number.isRequired,
+    }).isRequired,
 };
 
 export default Menu;

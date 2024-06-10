@@ -12,10 +12,9 @@ import useHorarios from './hooks/useHorario';
 
 const App = () => {
     const { user, handleLogin, handleLogout } = useAuth();
-    const barbeiroId = user ? user.usuarioId : 1;
+    const barbeiroId = user ? user.barbeiroId : null;
     const { horarios, handleAgendar, adicionarHorario, removerHorario } = useHorarios(barbeiroId);
-    const [dataSelecionada, setDataSelecionada] = useState(new Date());
-
+    
     useEffect(() => {
         console.log('Dados do usuário no App:', user);
     }, [user]);
@@ -27,12 +26,12 @@ const App = () => {
     return (
         <Router>
             <div className="container">
-                {user && <Menu onLogout={handleLogout} userName={user.nome} />}
+                {user && <Menu onLogout={handleLogout} user={user} />}
                 <Routes>
                     <Route path="/login" element={user ? <Navigate to="/horariosdisponiveis" /> : <Login onLogin={handleLogin} />} />
                     <Route path="/register" element={user ? <Navigate to="/horariosdisponiveis" /> : <FormularioRegistro />} />
                     <Route path="/horariosdisponiveis" element={<TabelaHorariosDisponiveis horarios={horarios} cliente={user} onAgendar={handleAgendar} />} />
-                    <Route path="/horarios" element={user ? (
+                    <Route path="/horarios" element={user && user.papelId !== 1 ? (
                         <>
                             <FormularioAgendamentoBarbeiro adicionarHorario={adicionarHorario} barbeiro={user} />
                             <TabelaAgendamentos horarios={horarios} removerHorario={removerHorario} />
