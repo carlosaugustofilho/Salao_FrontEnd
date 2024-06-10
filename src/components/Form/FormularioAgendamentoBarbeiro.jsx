@@ -3,37 +3,35 @@ import PropTypes from 'prop-types';
 import { FaCalendarAlt, FaClock } from 'react-icons/fa';
 
 function FormularioAgendamentoBarbeiro({ adicionarHorario, barbeiro }) {
-    const [barbeiroId, setBarbeiroId] = useState('');
     const [data, setData] = useState('');
     const [horaInicio, setHoraInicio] = useState('');
     const [horaFim, setHoraFim] = useState('');
 
     useEffect(() => {
         if (barbeiro) {
-            ///setBarbeiroId(barbeiro.barbeiroId.toString()); // Certifique-se de que o barbeiroId é utilizado
             console.log('Barbeiro ID:', barbeiro.barbeiroId);
             console.log('Barbeiro Nome:', barbeiro.nome);
         }
     }, [barbeiro]);
-    
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (barbeiroId && data && horaInicio && horaFim) {
+        if (barbeiro.barbeiroId && data && horaInicio && horaFim) {
             const horario = {
-                barbeiroId: parseInt(barbeiroId, 10),
-                data: new Date(data).toISOString(),
+                barbeiroId: barbeiro.barbeiroId,
+                data: new Date(data + 'T00:00:00').toISOString(),  // Ajuste para garantir que a data está correta
                 horaInicio: `${horaInicio}:00`,
                 horaFim: `${horaFim}:00`
             };
             console.log('Dados enviados:', horario);
             adicionarHorario(horario);
-            setBarbeiroId(barbeiro.usuarioId.toString());
             setData('');
             setHoraInicio('');
             setHoraFim('');
         }
     };
+    
+   
 
     return (
         <div className="container mt-4">
@@ -43,15 +41,7 @@ function FormularioAgendamentoBarbeiro({ adicionarHorario, barbeiro }) {
                         <h1 className="text-center mb-4">Registrar Horários Disponíveis</h1>
                         <form onSubmit={handleSubmit}>
                             <div className="form-group">
-                                <label htmlFor="barbeiroId">Barbeiro ID</label>
-                                <input
-                                    type="text"
-                                    id="barbeiroId"
-                                    className="form-control"
-                                    value={barbeiroId}
-                                    onChange={(e) => setBarbeiroId(e.target.value)}
-                                    required
-                                />
+                                <label htmlFor="barbeiroNome">Barbeiro: {barbeiro.nome}</label>
                             </div>
                             <div className="form-group">
                                 <label htmlFor="data">
@@ -104,7 +94,7 @@ function FormularioAgendamentoBarbeiro({ adicionarHorario, barbeiro }) {
 FormularioAgendamentoBarbeiro.propTypes = {
     adicionarHorario: PropTypes.func.isRequired,
     barbeiro: PropTypes.shape({
-        usuarioId: PropTypes.number.isRequired,
+        barbeiroId: PropTypes.number.isRequired,
         nome: PropTypes.string.isRequired,
     }).isRequired,
 };

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import scheduleService from '../../api/scheduleService';
-import { FaCalendarAlt, FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import ModalAvisoAgendamento from '../modals/cliente/ModalAvisoAgendamento';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 const TabelaHorariosDisponiveis = ({ horarios, cliente, onAgendar }) => {
     const [horariosState, setHorarios] = useState([]);
@@ -22,13 +21,9 @@ const TabelaHorariosDisponiveis = ({ horarios, cliente, onAgendar }) => {
 
         const storedUser = localStorage.getItem('user');
         const storedClienteId = localStorage.getItem('clienteId');
-        console.log('Dados do usuário armazenados no localStorage:', storedUser);
-        console.log('Dados do cliente armazenados no localStorage:', storedClienteId);
-
         if (storedUser) {
             try {
                 const parsedUser = JSON.parse(storedUser);
-                console.log('Dados do usuário após parse:', parsedUser);
                 setUsuario(parsedUser);
             } catch (error) {
                 console.error('Erro ao analisar os dados do usuário do localStorage:', error);
@@ -56,9 +51,6 @@ const TabelaHorariosDisponiveis = ({ horarios, cliente, onAgendar }) => {
             return;
         }
 
-        console.log('Usuário no momento do agendamento:', usuario);
-        console.log('Cliente no momento do agendamento:', clienteId);
-
         if (!usuario || !clienteId) {
             console.error('Usuário ou cliente não encontrado');
             return;
@@ -73,8 +65,6 @@ const TabelaHorariosDisponiveis = ({ horarios, cliente, onAgendar }) => {
                 horaFim: horario.horaFim,
                 usuarioId: usuario.usuarioId
             };
-
-            console.log('Dados do agendamento a serem enviados:', agendamentoRequest);
 
             await scheduleService.agendarHorario(agendamentoRequest);
 
@@ -122,12 +112,13 @@ const TabelaHorariosDisponiveis = ({ horarios, cliente, onAgendar }) => {
                     style={{
                         cursor: 'pointer',
                         padding: '10px',
-                        margin: '5px',
+                        margin: '2px',
                         border: '1px solid #ddd',
                         borderRadius: '4px',
                         textAlign: 'center',
                         backgroundColor: day.toDateString() === selectedDate.toDateString() ? '#007bff' : 'transparent',
-                        color: day.toDateString() === selectedDate.toDateString() ? '#fff' : '#000'
+                        color: day.toDateString() === selectedDate.toDateString() ? '#fff' : '#000',
+                        flex: '1'
                     }}
                 >
                     {day.toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric' })}
@@ -158,7 +149,9 @@ const TabelaHorariosDisponiveis = ({ horarios, cliente, onAgendar }) => {
                 <button className="btn btn-link" onClick={goToPreviousWeek}>
                     <FaArrowLeft />
                 </button>
-                {renderDaysOfWeek()}
+                <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                    {renderDaysOfWeek()}
+                </div>
                 <button className="btn btn-link" onClick={goToNextWeek}>
                     <FaArrowRight />
                 </button>
@@ -184,12 +177,17 @@ const TabelaHorariosDisponiveis = ({ horarios, cliente, onAgendar }) => {
                                     <td>{horario.horaInicio}</td>
                                     <td>{horario.horaFim}</td>
                                     <td>
-                                        <button 
-                                            className={`btn ${horario.agendado ? 'btn-danger' : 'btn-success'}`} 
+                                        <div 
                                             onClick={() => handleAgendar(horario.id)}
-                                        >
-                                            {horario.agendado ? 'Indisponível' : 'Agendar'}
-                                        </button>
+                                            style={{
+                                                width: '20px',
+                                                height: '20px',
+                                                borderRadius: '50%',
+                                                backgroundColor: horario.agendado ? 'red' : 'green',
+                                                display: 'inline-block',
+                                                cursor: 'pointer'
+                                            }}
+                                        />
                                     </td>
                                 </tr>
                             ))
