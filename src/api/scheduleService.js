@@ -32,6 +32,14 @@ const scheduleService = {
         console.log('POST data:', agendamentoRequest);
         return api.post(endpoint, agendamentoRequest);
     },
+    listarTodosAgendamentos: async () => {
+        const endpoint = '/barbeiro/ListarTodosAgendamentos';
+        return api.get(endpoint);
+    },
+    listarHorariosPorData: async (barbeiroId, data) => {
+        const endpoint = `/horario/ListarHorariosDisponiveisPorData?barbeiroId=${barbeiroId}&data=${data}`;
+        return api.get(endpoint);
+    },
    
 };
 
