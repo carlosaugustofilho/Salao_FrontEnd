@@ -14,7 +14,7 @@ const App = () => {
     const { user, handleLogin, handleLogout } = useAuth();
     const barbeiroId = user ? user.barbeiroId : null;
     const { horarios, handleAgendar, adicionarHorario, removerHorario } = useHorarios(barbeiroId);
-    
+
     useEffect(() => {
         console.log('Dados do usuário no App:', user);
     }, [user]);
@@ -34,8 +34,12 @@ const App = () => {
                     <Route path="/horarios" element={user && user.papelId !== 1 ? (
                         <>
                             <FormularioAgendamentoBarbeiro adicionarHorario={adicionarHorario} barbeiro={user} />
-                            <TabelaAgendamentos horarios={horarios} removerHorario={removerHorario} />
                         </>
+                    ) : (
+                        <Navigate to="/login" />
+                    )} />
+                    <Route path="/agendamentos" element={user && user.papelId !== 1 ? (
+                        <TabelaAgendamentos removerHorario={removerHorario} />
                     ) : (
                         <Navigate to="/login" />
                     )} />

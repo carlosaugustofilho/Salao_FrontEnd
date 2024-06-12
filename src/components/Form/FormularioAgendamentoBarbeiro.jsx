@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { FaCalendarAlt, FaClock } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import scheduleService from '../../api/scheduleService';
+import AdicionarHorarioModal from '../modals/barbeiro/AdicionarHorarioModal'; // Certifique-se de que o caminho está correto
+import Opcoes from '../modals/barbeiro/Opcoes'; // Certifique-se de que o caminho está correto
 
-function FormularioAgendamentoBarbeiro({ adicionarHorario, barbeiro }) {
-    const [data, setData] = useState('');
-    const [horaInicio, setHoraInicio] = useState('');
-    const [horaFim, setHoraFim] = useState('');
+const FormularioAgendamentoBarbeiro = ({ adicionarHorario, barbeiro }) => {
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [showModal, setShowModal] = useState(false);
+    const [showOptionsModal, setShowOptionsModal] = useState(false);
+    const [horariosDisponiveis, setHorariosDisponiveis] = useState([]);
 
     useEffect(() => {
         if (barbeiro) {
@@ -14,78 +18,152 @@ function FormularioAgendamentoBarbeiro({ adicionarHorario, barbeiro }) {
         }
     }, [barbeiro]);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (barbeiro.barbeiroId && data && horaInicio && horaFim) {
-            const horario = {
-                barbeiroId: barbeiro.barbeiroId,
-                data: new Date(data + 'T00:00:00').toISOString(),  // Ajuste para garantir que a data está correta
-                horaInicio: `${horaInicio}:00`,
-                horaFim: `${horaFim}:00`
-            };
-            console.log('Dados enviados:', horario);
-            adicionarHorario(horario);
-            setData('');
-            setHoraInicio('');
-            setHoraFim('');
+    const fetchHorariosDisponiveis = async (date) => {
+        try {
+            const response = await scheduleService.listarHorarios(barbeiro.barbeiroId, date.toISOString());
+            if (response.length > 0) {
+                setHorariosDisponiveis(response);
+            } else {
+                console.log('Nenhum horário disponível para esta data.');
+            }
+        } catch (error) {
+            console.error('Erro ao buscar horários disponíveis:', error);
         }
     };
-    
-   
+
+    useEffect(() => {
+        if (barbeiro) {
+            fetchHorariosDisponiveis(selectedDate);
+        }
+    }, [selectedDate, barbeiro]);
+
+    const handleDateClick = (date) => {
+        setSelectedDate(date);
+        setShowOptionsModal(true);
+    };
+
+    const handleOptionSelect = (option) => {
+        setShowOptionsModal(false);
+        if (option === 'view') {
+            // Exibe os horários disponíveis para a data selecionada
+        } else if (option === 'add') {
+            setShowModal(true);
+        }
+    };
+
+    const renderDaysOfWeek = () => {
+        const startOfWeek = new Date(selectedDate);
+        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+        const days = [];
+        for (let i = 0; i < 7; i++) {
+            const day = new Date(startOfWeek);
+            day.setDate(day.getDate() + i);
+            days.push(
+                <div
+                    key={i}
+                    className={`day ${day.toDateString() === selectedDate.toDateString() ? 'selected' : ''}`}
+                    onClick={() => handleDateClick(day)}
+                    style={{
+                        cursor: 'pointer',
+                        padding: '10px',
+                        margin: '2px',
+                        border: '1px solid #ddd',
+                        borderRadius: '4px',
+                        textAlign: 'center',
+                        backgroundColor: day.toDateString() === selectedDate.toDateString() ? '#FF6600' : 'transparent',
+                        color: day.toDateString() === selectedDate.toDateString() ? '#fff' : '#fff',
+                        flex: '1',
+                        minWidth: '40px'
+                    }}
+                >
+                    {day.toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric' })}
+                </div>
+            );
+        }
+        return days;
+    };
+
+    const goToPreviousWeek = () => {
+        const newDate = new Date(selectedDate);
+        newDate.setDate(newDate.getDate() - 7);
+        setSelectedDate(newDate);
+    };
+
+    const goToNextWeek = () => {
+        const newDate = new Date(selectedDate);
+        newDate.setDate(newDate.getDate() + 7);
+        setSelectedDate(newDate);
+    };
+
+    const horariosFiltrados = horariosDisponiveis.filter((horario) => {
+        const horarioDate = new Date(horario.data);
+        return (
+            horarioDate.getDate() === selectedDate.getDate() &&
+            horarioDate.getMonth() === selectedDate.getMonth() &&
+            horarioDate.getFullYear() === selectedDate.getFullYear()
+        );
+    });
 
     return (
-        <div className="container mt-4">
-            <div className="row justify-content-center">
-                <div className="col-md-8 col-sm-12">
-                    <div className="card p-4 shadow">
-                        <h1 className="text-center mb-4">Registrar Horários Disponíveis</h1>
-                        <form onSubmit={handleSubmit}>
-                            <div className="form-group">
-                                <label htmlFor="barbeiroNome">Barbeiro: {barbeiro.nome}</label>
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="data">
-                                    Data <FaCalendarAlt />
-                                </label>
-                                <input
-                                    type="date"
-                                    id="data"
-                                    className="form-control"
-                                    value={data}
-                                    onChange={(e) => setData(e.target.value)}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="horaInicio">
-                                    Hora Início <FaClock />
-                                </label>
-                                <input
-                                    type="time"
-                                    id="horaInicio"
-                                    className="form-control"
-                                    value={horaInicio}
-                                    onChange={(e) => setHoraInicio(e.target.value)}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="horaFim">
-                                    Hora Fim <FaClock />
-                                </label>
-                                <input
-                                    type="time"
-                                    id="horaFim"
-                                    className="form-control"
-                                    value={horaFim}
-                                    onChange={(e) => setHoraFim(e.target.value)}
-                                    required
-                                />
-                            </div>
-                            <button type="submit" className="btn btn-primary mt-3 w-100">Adicionar Horário</button>
-                        </form>
+        <div style={{ backgroundColor: '#333', color: '#fff', padding: '20px', borderRadius: '8px', minHeight: '100vh' }}>
+            <div className="container mt-4" style={{ maxWidth: '100%' }}>
+                <h2 className="text-center mb-4" style={{ color: '#FF6600' }}>Registrar Horários Disponíveis</h2>
+                <div className="d-flex justify-content-between mb-4 align-items-center">
+                    <button className="btn btn-link" onClick={goToPreviousWeek} style={{ color: '#FF6600' }}>
+                        <FaArrowLeft />
+                    </button>
+                    <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', width: '100%' }}>
+                        {renderDaysOfWeek()}
                     </div>
+                    <button className="btn btn-link" onClick={goToNextWeek} style={{ color: '#FF6600' }}>
+                        <FaArrowRight />
+                    </button>
                 </div>
+                <div className="d-flex justify-content-center mb-4">
+                    <h4>{selectedDate.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h4>
+                </div>
+
+                <div className="table-responsive">
+                    <table className="table table-striped table-dark" style={{ marginBottom: '20px' }}>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Hora Início</th>
+                                <th>Hora Fim</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {horariosFiltrados.length > 0 ? (
+                                horariosFiltrados.map((horario, index) => (
+                                    <tr key={index}>
+                                        <td>{new Date(horario.data).toLocaleDateString()}</td>
+                                        <td>{horario.horaInicio}</td>
+                                        <td>{horario.horaFim}</td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="3" className="text-center">Nenhum horário disponível...</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+
+                <AdicionarHorarioModal
+                    show={showModal}
+                    handleClose={() => setShowModal(false)}
+                    adicionarHorario={adicionarHorario}
+                    barbeiro={barbeiro}
+                    selectedDate={selectedDate}
+                    fetchHorariosDisponiveis={fetchHorariosDisponiveis}
+                />
+
+                <Opcoes
+                    showOptionsModal={showOptionsModal}
+                    setShowOptionsModal={setShowOptionsModal}
+                    handleOptionSelect={handleOptionSelect}
+                />
             </div>
         </div>
     );
