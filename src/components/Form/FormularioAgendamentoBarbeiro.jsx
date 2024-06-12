@@ -80,7 +80,11 @@ const FormularioAgendamentoBarbeiro = ({ adicionarHorario, barbeiro }) => {
                 </div>
             );
         }
-        return days;
+        return (
+            <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', width: '100%' }}>
+                {days}
+            </div>
+        );
     };
 
     const goToPreviousWeek = () => {
@@ -112,9 +116,7 @@ const FormularioAgendamentoBarbeiro = ({ adicionarHorario, barbeiro }) => {
                     <button className="btn btn-link" onClick={goToPreviousWeek} style={{ color: '#FF6600' }}>
                         <FaArrowLeft />
                     </button>
-                    <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', width: '100%' }}>
-                        {renderDaysOfWeek()}
-                    </div>
+                    {renderDaysOfWeek()}
                     <button className="btn btn-link" onClick={goToNextWeek} style={{ color: '#FF6600' }}>
                         <FaArrowRight />
                     </button>
