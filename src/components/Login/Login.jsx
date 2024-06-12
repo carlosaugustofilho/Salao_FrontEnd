@@ -63,7 +63,7 @@ const Login = ({ onLogin }) => {
                 boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
             }}>
                 <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-                    <img src="logo.png" alt="Amigo Cliente" style={{ width: '100px' }} />
+                    <img src="logo.png" alt="Amigo Cliente" style={{ width: '100px' }} /> {/* Substitua pelo caminho da sua logo */}
                 </div>
                 <form onSubmit={handleSubmit} style={{ width: '100%' }}>
                     <div style={{ marginBottom: '15px' }}>
@@ -110,7 +110,7 @@ const Login = ({ onLogin }) => {
                         padding: '10px',
                         border: 'none',
                         borderRadius: '5px',
-                        backgroundColor: '#555',
+                        backgroundColor: '#FF6600',
                         color: 'white',
                         fontSize: '16px',
                         cursor: 'pointer'

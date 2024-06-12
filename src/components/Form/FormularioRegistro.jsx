@@ -133,7 +133,7 @@ const Register = () => {
                         padding: '10px',
                         border: 'none',
                         borderRadius: '5px',
-                        backgroundColor: '#555',
+                        backgroundColor: '#FF6600',
                         color: 'white',
                         fontSize: '16px',
                         cursor: 'pointer'

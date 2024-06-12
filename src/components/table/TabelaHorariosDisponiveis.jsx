@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import scheduleService from '../../api/scheduleService';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import scheduleService from '../../api/scheduleService';
 import ModalAvisoAgendamento from '../modals/cliente/ModalAvisoAgendamento';
 
 const TabelaHorariosDisponiveis = ({ horarios, cliente, onAgendar }) => {
@@ -116,8 +116,8 @@ const TabelaHorariosDisponiveis = ({ horarios, cliente, onAgendar }) => {
                         border: '1px solid #ddd',
                         borderRadius: '4px',
                         textAlign: 'center',
-                        backgroundColor: day.toDateString() === selectedDate.toDateString() ? '#007bff' : 'transparent',
-                        color: day.toDateString() === selectedDate.toDateString() ? '#fff' : '#000',
+                        backgroundColor: day.toDateString() === selectedDate.toDateString() ? '#FF6600' : 'transparent',
+                        color: day.toDateString() === selectedDate.toDateString() ? '#fff' : '#fff',
                         flex: '1'
                     }}
                 >
@@ -125,7 +125,11 @@ const TabelaHorariosDisponiveis = ({ horarios, cliente, onAgendar }) => {
                 </div>
             );
         }
-        return days;
+        return (
+            <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', width: '100%' }}>
+                {days}
+            </div>
+        );
     };
 
     const goToPreviousWeek = () => {
@@ -141,63 +145,61 @@ const TabelaHorariosDisponiveis = ({ horarios, cliente, onAgendar }) => {
     };
 
     return (
-        <div className="container mt-4">
-            <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
-                <h2 className="mr-2 mb-2 mb-md-0">Horários Disponíveis</h2>
-            </div>
-            <div className="d-flex justify-content-between mb-4 align-items-center">
-                <button className="btn btn-link" onClick={goToPreviousWeek}>
-                    <FaArrowLeft />
-                </button>
-                <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+        <div style={{ backgroundColor: '#333', color: '#fff', padding: '20px', borderRadius: '8px', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+            <div className="container mt-4" style={{ maxWidth: '100%' }}>
+                <h2 className="text-center mb-4" style={{ color: '#FF6600' }}>Horários Disponíveis</h2>
+                <div className="d-flex justify-content-between mb-4 align-items-center">
+                    <button className="btn btn-link" onClick={goToPreviousWeek} style={{ color: '#FF6600' }}>
+                        <FaArrowLeft />
+                    </button>
                     {renderDaysOfWeek()}
+                    <button className="btn btn-link" onClick={goToNextWeek} style={{ color: '#FF6600' }}>
+                        <FaArrowRight />
+                    </button>
                 </div>
-                <button className="btn btn-link" onClick={goToNextWeek}>
-                    <FaArrowRight />
-                </button>
-            </div>
-            <div className="d-flex justify-content-center mb-4">
-                <h4>{selectedDate.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h4>
-            </div>
-            <div className="table-responsive">
-                <table className="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Hora Início</th>
-                            <th>Hora Fim</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {horariosState.length > 0 ? (
-                            horariosState.map((horario) => (
-                                <tr key={horario.id}>
-                                    <td>{new Date(horario.data).toLocaleDateString()}</td>
-                                    <td>{horario.horaInicio}</td>
-                                    <td>{horario.horaFim}</td>
-                                    <td>
-                                        <div 
-                                            onClick={() => handleAgendar(horario.id)}
-                                            style={{
-                                                width: '20px',
-                                                height: '20px',
-                                                borderRadius: '50%',
-                                                backgroundColor: horario.agendado ? 'red' : 'green',
-                                                display: 'inline-block',
-                                                cursor: 'pointer'
-                                            }}
-                                        />
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
+                <div className="d-flex justify-content-center mb-4">
+                    <h4>{selectedDate.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h4>
+                </div>
+                <div className="table-responsive" style={{ flex: '1' }}>
+                    <table className="table table-striped table-dark" style={{ marginBottom: '20px' }}>
+                        <thead>
                             <tr>
-                                <td colSpan="4" className="text-center">Nenhum horário disponível...</td>
+                                <th>Data</th>
+                                <th>Hora Início</th>
+                                <th>Hora Fim</th>
+                                <th>Status</th>
                             </tr>
-                        )}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {horariosState.length > 0 ? (
+                                horariosState.map((horario) => (
+                                    <tr key={horario.id}>
+                                        <td>{new Date(horario.data).toLocaleDateString()}</td>
+                                        <td>{horario.horaInicio}</td>
+                                        <td>{horario.horaFim}</td>
+                                        <td>
+                                            <div 
+                                                onClick={() => handleAgendar(horario.id)}
+                                                style={{
+                                                    width: '20px',
+                                                    height: '20px',
+                                                    borderRadius: '50%',
+                                                    backgroundColor: horario.agendado ? 'red' : 'green',
+                                                    display: 'inline-block',
+                                                    cursor: 'pointer'
+                                                }}
+                                            />
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="4" className="text-center">Nenhum horário disponível...</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <ModalAvisoAgendamento show={showModal} handleClose={handleCloseModal} />
         </div>

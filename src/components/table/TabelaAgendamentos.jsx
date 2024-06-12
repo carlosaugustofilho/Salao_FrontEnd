@@ -12,7 +12,7 @@ const TabelaAgendamentos = ({ removerHorario }) => {
         const fetchAgendamentos = async () => {
             try {
                 const response = await scheduleService.listarTodosAgendamentos();
-                console.log('Agendamentos recebidos:', response);  // Verifica os dados recebidos
+                console.log('Agendamentos recebidos:', response);
                 setAgendamentos(response);
                 filterAgendamentosByDate(response, selectedDate);
             } catch (error) {
@@ -53,8 +53,8 @@ const TabelaAgendamentos = ({ removerHorario }) => {
                         border: '1px solid #ddd',
                         borderRadius: '4px',
                         textAlign: 'center',
-                        backgroundColor: day.toDateString() === selectedDate.toDateString() ? '#007bff' : 'transparent',
-                        color: day.toDateString() === selectedDate.toDateString() ? '#fff' : '#000',
+                        backgroundColor: day.toDateString() === selectedDate.toDateString() ? '#FF6600' : 'transparent',
+                        color: day.toDateString() === selectedDate.toDateString() ? '#fff' : '#fff',
                         flex: '1'
                     }}
                 >
@@ -62,7 +62,11 @@ const TabelaAgendamentos = ({ removerHorario }) => {
                 </div>
             );
         }
-        return days;
+        return (
+            <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', width: '100%' }}>
+                {days}
+            </div>
+        );
     };
 
     const goToPreviousWeek = () => {
@@ -78,36 +82,34 @@ const TabelaAgendamentos = ({ removerHorario }) => {
     };
 
     return (
-        <div className="container mt-4">
-            <h2 className="text-center mb-4">Agendamentos</h2>
-            <div className="d-flex justify-content-between mb-4 align-items-center">
-                <button className="btn btn-link" onClick={goToPreviousWeek}>
-                    <FaArrowLeft />
-                </button>
-                <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+        <div style={{ backgroundColor: '#333', color: '#fff', padding: '20px', borderRadius: '8px', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+            <div className="container mt-4" style={{ maxWidth: '100%' }}>
+                <h2 className="text-center mb-4" style={{ color: '#FF6600' }}>Agendamentos</h2>
+                <div className="d-flex justify-content-between mb-4 align-items-center">
+                    <button className="btn btn-link" onClick={goToPreviousWeek} style={{ color: '#FF6600' }}>
+                        <FaArrowLeft />
+                    </button>
                     {renderDaysOfWeek()}
+                    <button className="btn btn-link" onClick={goToNextWeek} style={{ color: '#FF6600' }}>
+                        <FaArrowRight />
+                    </button>
                 </div>
-                <button className="btn btn-link" onClick={goToNextWeek}>
-                    <FaArrowRight />
-                </button>
-            </div>
-            <div className="d-flex justify-content-center mb-4">
-                <h4>{selectedDate.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h4>
-            </div>
-            <div className="row mt-4">
-                <div className="col-12">
-                    <div className="table-responsive">
-                        <table className="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Data/Hora Agendamento</th>
-                                    <th>Status</th>
-                                    <th>Observações</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredAgendamentos.map((agendamento) => (
+                <div className="d-flex justify-content-center mb-4">
+                    <h4>{selectedDate.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h4>
+                </div>
+                <div className="table-responsive" style={{ flex: '1' }}>
+                    <table className="table table-striped table-dark" style={{ marginBottom: '20px' }}>
+                        <thead>
+                            <tr>
+                                <th>Data/Hora Agendamento</th>
+                                <th>Status</th>
+                                <th>Observações</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredAgendamentos.length > 0 ? (
+                                filteredAgendamentos.map((agendamento) => (
                                     <tr key={agendamento.agendamentoId}>
                                         <td>{new Date(agendamento.dataHoraAgendamento).toLocaleString()}</td>
                                         <td>{agendamento.status}</td>
@@ -121,15 +123,14 @@ const TabelaAgendamentos = ({ removerHorario }) => {
                                             </button>
                                         </td>
                                     </tr>
-                                ))}
-                                {filteredAgendamentos.length === 0 && (
-                                    <tr>
-                                        <td colSpan="4" className="text-center">Nenhum agendamento disponível...</td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="4" className="text-center">Nenhum agendamento disponível...</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
