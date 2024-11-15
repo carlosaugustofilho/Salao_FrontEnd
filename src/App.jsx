@@ -25,7 +25,7 @@ const App = () => {
 
     return (
         <Router>
-            <div className="container">
+            <div className="app-container">
                 {user && <Menu onLogout={handleLogout} user={user} />}
                 <Routes>
                     <Route path="/login" element={user ? <Navigate to="/horariosdisponiveis" /> : <Login onLogin={handleLogin} />} />
